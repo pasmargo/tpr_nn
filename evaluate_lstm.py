@@ -77,5 +77,6 @@ evaluation = model.evaluate(
     Labels,
     batch_size=1,
     verbose=1)
-logging.info('Results: {0}'.format(list(zip(
-    model.metrics_names, evaluation))))
+logging.info('Results:')
+for metric_name, result in zip(model.metrics_names, evaluation):
+    logging.info('{0}: {1}'.format(metric_name, result))
