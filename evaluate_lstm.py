@@ -21,16 +21,8 @@ num_feats = 3
 num_types_au = 6 # activity unit types.
 latent_dim = 100
 model_name = 'lstm_stateful'
-max_num_epochs = 20
+max_num_epochs = 2
 
-# Feats is a matrix N x F with N rows (activity units) and F columns (features of AUs).
-# Labels is a matrix N x C where C is the number of classes.
-# Feats, Labels = load_au_file('P01_T1.au')
-# print(Labels)
-# print(Feats[:7,:])
-# 
-# assert Labels.shape[1] == num_types_au, 'Unexpected number of AU types: {0} vs {1}'.format(
-#     Labels.shape[1], num_types_au)
 
 au_feats = Input(
     batch_shape=(1, 1, num_feats),
@@ -62,6 +54,8 @@ sessions = ['P01_T1.au']
 for i in range(max_num_epochs):
     # for (Feats, Labels) in feats_and_labels:
     for session in sessions:
+        # Feats is a matrix N x F with N rows (activity units) and F columns (features of AUs).
+        # Labels is a matrix N x C where C is the number of classes.
         Feats, Labels = load_au_file('P01_T1.au')
         Feats = np.expand_dims(Feats, axis=1)
         model.fit(
@@ -74,3 +68,14 @@ for i in range(max_num_epochs):
             callbacks=callbacks)
         model.reset_states()
 
+logging.info('Start model evaluation: {0}'.format(
+    model.metrics_names))
+Feats, Labels = load_au_file('P01_T1.au')
+Feats = np.expand_dims(Feats, axis=1)
+evaluation = model.evaluate(
+    Feats,
+    Labels,
+    batch_size=1,
+    verbose=1)
+logging.info('Results: {0}'.format(list(zip(
+    model.metrics_names, evaluation))))
