@@ -39,6 +39,10 @@ def load_au_file(fname, num_classes=6, num_feats=3):
         prev_maximum_src = get_id_max(row['STid'])
         Features[i, 2] = get_id_max(row['TTid']) - prev_maximum_trg
         prev_maximum_trg = get_id_max(row['TTid'])
+    # Labels = np.delete(Labels, [0], axis=0)
+    # Features = np.delete(Features, [-1], axis=0)
+    Labels = Labels[1:,:]
+    Features = Features[:-1,:]
     return Features, Labels
 
 def print_model_architecture(model, fname):
