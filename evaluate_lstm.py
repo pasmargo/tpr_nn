@@ -21,7 +21,7 @@ num_feats = 3
 num_types_au = 6 # activity unit types.
 latent_dim = 100
 model_name = 'lstm_stateful'
-max_num_epochs = 2
+max_num_epochs = 20
 
 
 au_feats = Input(
@@ -33,6 +33,10 @@ x = LSTM(
     stateful=True,
     name='lstm1')(au_feats)
 # Softmax over each activity unit type.
+x = Dense(
+    num_types_au,
+    activation='tanh',
+    name='dense1')(x)
 x = Dense(
     num_types_au,
     activation='softmax',
