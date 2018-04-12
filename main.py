@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[ ]:
+# In[42]:
 
 
 import os
@@ -11,9 +11,9 @@ import numpy as np
 import math
 
 #path = "../data/RUC17/Tables/"
+# read all *au files from the path directory; return a list of pandas data Frames
 def read_au_file(path):
     # initialize pandas dataFrame
-#    df = pd.DataFrame()
     dfl = []
     
     # read in data tables into df DataFrame
@@ -21,10 +21,10 @@ def read_au_file(path):
         print(fn)
         df = pd.read_csv(fn, sep="\t", dtype=None)
         dfl.append(df)
-#        df = pd.concat([df, pd.read_csv(fn, sep="\t", dtype=None)], ignore_index=True)
     return (dfl)
 
 
+# convert "au" dataframe into a normalized matrix
 def convert_au_file(df):
     df1 = pd.DataFrame()
     numRow = len(df.index)
@@ -107,21 +107,26 @@ def convert_au_file(df):
 
     return(df1)
 
+# convert an "au" dataframe into a normalized array
 def featLab_au_file(df):
-    Features = np.asmatrix(df[["STidDiff","TTidDiff", "PhaseR", "PhaseO", "PhaseD", "Dur", "Ins", "Del", "nFix", "DFix", "ScSpan"]].as_matrix(), dtype="float32")
-# Type as labels
-    Labels = np.asmatrix(df[["Type1", "Type2", "Type4", "Type5", "Type6", "Type8"]].as_matrix(), dtype="float32")
+    last = len(df.index)-1
+    f = df[["STidDiff","TTidDiff", "PhaseR", "PhaseO", "PhaseD", "Dur", "Ins", "Del", "nFix", "DFix", "ScSpan"]].astype("float32")
+    Feat = f.drop(f.index[last]).as_matrix()
     
-    return (Features, Labels)
+# Type as labels
+    l = df[["Type1", "Type2", "Type4", "Type5", "Type6", "Type8"]].astype("float32")
+    Labs = l.drop(l.index[0]).as_matrix()
+    
+    return (Feat, Labs)
 
-# load a 
+# read, convert and extract features/labels from a set of au files 
 def load_au_files(path):
     dfl = read_au_file(path)
     dfc = [convert_au_file(d) for d in dfl]
     return ([featLab_au_file(d) for d in dfc])
 
 
-# In[ ]:
+# In[47]:
 
 
 # -*- coding: utf-8 -*-
